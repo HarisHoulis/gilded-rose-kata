@@ -1,28 +1,18 @@
 package com.gildedrose
 
-class Item(
+data class Item(
     val name: String,
-    var sellIn: Int,
-    var quality: Int,
+    val sellIn: Int,
+    val quality: Int,
     private val aging: () -> Int = Aging.standard,
     private val degradation: (Int, Int) -> Int = Degradation.standard,
     private val saturation: (Int) -> Int = Saturation.standard,
 ) {
-    fun update() {
-        sellIn -= aging()
-        quality = saturation(quality - degradation(quality, sellIn))
-    }
-
     fun updated(): Item {
         val sellIn = sellIn - aging()
-        val quality = saturation(quality - degradation(quality, sellIn))
-        return Item(
-            name,
-            sellIn,
-            quality,
-            aging,
-            degradation,
-            saturation
+        return copy(
+            sellIn = sellIn,
+            quality = saturation(this.quality - degradation(this.quality, sellIn)),
         )
     }
 
