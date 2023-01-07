@@ -15,14 +15,12 @@ open class BaseItem(
 ) : Item(name, sellIn, quality) {
 
     fun update() {
-        age()
+        sellIn -= aginng()
         degrade()
         saturate()
     }
 
-    protected open fun age() {
-        sellIn -= 1
-    }
+    protected open fun aginng() = 1
 
     protected open fun degrade() {
         quality -= when {
@@ -61,6 +59,6 @@ class Pass(name: String, sellIn: Int, quality: Int) : BaseItem(name, sellIn, qua
 
 class Sulfuras(name: String, sellIn: Int, quality: Int) : BaseItem(name, sellIn, quality) {
     override fun degrade() {}
-    override fun age() {}
+    override fun aginng() = 0
     override fun saturate() {}
 }
