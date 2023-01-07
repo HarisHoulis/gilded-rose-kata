@@ -1,6 +1,5 @@
 package com.gildedrose
 
-class GildedRose(val items: List<Item>) {
+typealias GildedRose = List<Item>
 
-    fun updated() = GildedRose(items.map { it.updated() })
-}
+fun GildedRose.updated() = map { it.updated() }
