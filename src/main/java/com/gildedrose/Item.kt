@@ -12,14 +12,13 @@ open class BaseItem(
     name: String,
     sellIn: Int,
     quality: Int,
+    private val aging: () -> Int = { 1 },
 ) : Item(name, sellIn, quality) {
 
     fun update() {
         sellIn -= aging()
         quality = saturation(quality - degradation(quality, sellIn))
     }
-
-    protected open fun aging() = 1
 
     protected open fun degradation(quality: Int, sellIn: Int) = when {
         sellIn < 0 -> 2
@@ -49,8 +48,12 @@ class Pass(name: String, sellIn: Int, quality: Int) : BaseItem(name, sellIn, qua
     }
 }
 
-class Sulfuras(name: String, sellIn: Int, quality: Int) : BaseItem(name, sellIn, quality) {
+class Sulfuras(name: String, sellIn: Int, quality: Int) : BaseItem(
+    name,
+    sellIn,
+    quality,
+    aging = { 0 }
+) {
     override fun degradation(quality: Int, sellIn: Int) = 0
-    override fun aging() = 0
     override fun saturation(quality: Int) = quality
 }
