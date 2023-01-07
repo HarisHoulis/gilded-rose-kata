@@ -8,7 +8,7 @@ open class Item(
     override fun toString(): String = "$name, $sellIn, $quality"
 }
 
-open class BaseItem(
+class BaseItem(
     name: String,
     sellIn: Int,
     quality: Int,
@@ -19,7 +19,7 @@ open class BaseItem(
             else -> 1
         }
     },
-    protected open val saturation: (Int) -> Int = { quality: Int ->
+    private val saturation: (Int) -> Int = { quality: Int ->
         when {
             quality < 0 -> 0
             quality > 50 -> 50
@@ -35,7 +35,7 @@ open class BaseItem(
 
 }
 
-class Brie(name: String, sellIn: Int, quality: Int) : BaseItem(
+fun Brie(name: String, sellIn: Int, quality: Int) = BaseItem(
     name,
     sellIn,
     quality,
@@ -47,7 +47,7 @@ class Brie(name: String, sellIn: Int, quality: Int) : BaseItem(
     }
 )
 
-class Pass(name: String, sellIn: Int, quality: Int) : BaseItem(
+fun Pass(name: String, sellIn: Int, quality: Int) = BaseItem(
     name,
     sellIn,
     quality,
@@ -61,7 +61,7 @@ class Pass(name: String, sellIn: Int, quality: Int) : BaseItem(
     }
 )
 
-class Sulfuras(name: String, sellIn: Int, quality: Int) : BaseItem(
+fun Sulfuras(name: String, sellIn: Int, quality: Int) = BaseItem(
     name,
     sellIn,
     quality,
