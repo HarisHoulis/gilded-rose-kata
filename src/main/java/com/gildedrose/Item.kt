@@ -8,24 +8,39 @@ open class Item(
     override fun toString(): String = "$name, $sellIn, $quality"
 }
 
-class BaseItem(
-    name: String,
-    sellIn: Int,
-    quality: Int,
-    private val aging: () -> Int = { 1 },
-    private val degradation: (Int, Int) -> Int = { _, sellIn: Int ->
+object Aging {
+    val standard: () -> Int = { 1 }
+    val none: () -> Int = { 0 }
+}
+
+object Degradation {
+    val standard: (Int, Int) -> Int = { _, sellIn: Int ->
         when {
             sellIn < 0 -> 2
             else -> 1
         }
-    },
-    private val saturation: (Int) -> Int = { quality: Int ->
+    }
+    val none: (Int, Int) -> Int = { _, _ -> 0 }
+}
+
+object Saturation {
+    val standard: (Int) -> Int = { quality: Int ->
         when {
             quality < 0 -> 0
             quality > 50 -> 50
             else -> quality
         }
-    },
+    }
+    val none: (Int) -> Int = { quality -> quality }
+}
+
+class BaseItem(
+    name: String,
+    sellIn: Int,
+    quality: Int,
+    private val aging: () -> Int = Aging.standard,
+    private val degradation: (Int, Int) -> Int = Degradation.standard,
+    private val saturation: (Int) -> Int = Saturation.standard,
 ) : Item(name, sellIn, quality) {
 
     fun update() {
@@ -39,9 +54,9 @@ fun Brie(name: String, sellIn: Int, quality: Int) = BaseItem(
     name,
     sellIn,
     quality,
-    degradation = { _, sellIn ->
+    degradation = { _, currentSellIn ->
         when {
-            sellIn < 0 -> -2
+            currentSellIn < 0 -> -2
             else -> -1
         }
     }
@@ -51,11 +66,11 @@ fun Pass(name: String, sellIn: Int, quality: Int) = BaseItem(
     name,
     sellIn,
     quality,
-    degradation = { quality, sellIn ->
+    degradation = { currentQuality, currentSellIn ->
         when {
-            sellIn < 0 -> quality
-            sellIn < 5 -> -3
-            sellIn < 10 -> -2
+            currentSellIn < 0 -> currentQuality
+            currentSellIn < 5 -> -3
+            currentSellIn < 10 -> -2
             else -> -1
         }
     }
@@ -65,7 +80,7 @@ fun Sulfuras(name: String, sellIn: Int, quality: Int) = BaseItem(
     name,
     sellIn,
     quality,
-    aging = { 0 },
-    degradation = { _, _ -> 0 },
-    saturation = { quality -> quality }
+    aging = Aging.none,
+    degradation = Degradation.none,
+    saturation = Saturation.none
 )
